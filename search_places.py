@@ -11,6 +11,7 @@ from langchain.tools import tool
 from dotenv import load_dotenv
 import os
 
+logger = logging.getLogger(__name__)
 
 # ── Константы ────────────────────────────────────────────────────────────
 
@@ -106,33 +107,33 @@ out body center {limit};
 
     for server in OVERPASS_SERVERS:
         try:
-            print(f"  → Пробуем Overpass-сервер: {server}")
+            logger.info("  → Пробуем Overpass-сервер: %s", server)
             time.sleep(1)
             response = requests.get(
                 server, params={"data": query}, headers=headers, timeout=30,
             )
             response.raise_for_status()
-            print(f"  ✓ Ответил: {server}")
+            logger.info("  ✓ Ответил: %s", server)
             return response.json()
 
         except requests.exceptions.HTTPError as e:
             status = e.response.status_code if e.response else "?"
             last_error = f"HTTP {status} от {server}"
-            print(f"  ✗ {last_error}")
+            logger.warning("  ✗ %s", last_error)
             if status == 400:
                 return {"error": f"Ошибка в Overpass-запросе: {e}"}
 
         except requests.exceptions.Timeout:
             last_error = f"Таймаут на {server}"
-            print(f"  ✗ {last_error}")
+            logger.warning("  ✗ %s", last_error)
 
         except requests.exceptions.RequestException as e:
             last_error = str(e)
-            print(f"  ✗ Ошибка соединения: {e}")
+            logger.warning("  ✗ Ошибка соединения: %s", e)
 
         except Exception as e:
             last_error = str(e)
-            print(f"  ✗ Неожиданная ошибка на {server}: {e}")
+            logger.warning("  ✗ Неожиданная ошибка на %s: %s", server, e)
 
     return {"error": f"Все Overpass-серверы недоступны. Последняя ошибка: {last_error}"}
 
@@ -157,7 +158,7 @@ def _wikipedia_geosearch(lat, lon, radius, limit=30):
         response.raise_for_status()
         return response.json().get("query", {}).get("geosearch", [])  # ИСПРАВЛЕНО: было "geocch"
     except Exception as e:
-        print(f"  ✗ Ошибка Wikipedia geosearch: {e}")
+        logger.warning("  ✗ Ошибка Wikipedia geosearch: %s", e)
         return []
 
 
@@ -189,7 +190,7 @@ def _get_short_extracts(titles):
                 result[title] = extract
         return result
     except Exception as e:
-        print(f"  ✗ Ошибка получения описаний: {e}")
+        logger.warning("  ✗ Ошибка получения описаний: %s", e)
         return {}
 
 
@@ -201,7 +202,7 @@ def search_places(lat: float, lon: float, radius: int = 1000, limit: int = 10) -
     Ищет достопримечательности через Overpass и Wikipedia, приоритизирует
     значимые объекты (с вики-статьёй, туристические) и сортирует по близости.
     """
-    print("ВЫЗВАНА search_places")
+    logger.info("Вызвана search_places")
 
     overpass_limit = 200
     wiki_limit = 30
@@ -212,7 +213,7 @@ def search_places(lat: float, lon: float, radius: int = 1000, limit: int = 10) -
     # ── Overpass ──
     osm_data = _query_overpass(lat, lon, radius, overpass_limit)
     if "error" in osm_data:
-        print(f"  ⚠ Overpass ошибка: {osm_data['error']}")
+        logger.warning("  ⚠ Overpass ошибка: %s", osm_data['error'])
         osm_failed = True
     else:
         elements = osm_data.get("elements", [])

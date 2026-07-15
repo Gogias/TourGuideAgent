@@ -4,6 +4,8 @@ from langchain.tools import tool
 from dotenv import load_dotenv
 import os
 
+logger = logging.getLogger(__name__)
+
 load_dotenv()
 
 
@@ -92,7 +94,7 @@ def wikipedia_lookup(query: str) -> str:
         str: текст статьи (сокращённый) вместе со ссылкой на источник,
              или сообщение что статья не найдена
     """
-    print("ВЫЗВАНА wikipedia_lookup")
+    logger.info("Вызвана wikipedia_lookup")
 
     title = _find_article_title(query)
     if not title:

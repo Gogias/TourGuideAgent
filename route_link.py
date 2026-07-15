@@ -1,5 +1,8 @@
+import logging
 from langchain.tools import tool
 from typing import Literal
+
+logger = logging.getLogger(__name__)
 
 
 # Соответствие способов передвижения параметрам Яндекс.Карт
@@ -33,7 +36,7 @@ def get_route_link(
     Возвращает:
         str: ссылка на Яндекс.Карты с построенным маршрутом
     """
-    print("ВЫЗВАНА get_route_link")
+    logger.info("Вызвана get_route_link")
 
     rtt = TRANSPORT_TYPES.get(transport, "pd")
 

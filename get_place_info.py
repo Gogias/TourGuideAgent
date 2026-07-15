@@ -6,6 +6,7 @@ import time
 from dotenv import load_dotenv
 import os
 
+logger = logging.getLogger(__name__)
 
 # Константы для Nominatim (соблюдаем правила использования)
 NOMINATIM_URL = "https://nominatim.openstreetmap.org/reverse"
@@ -36,7 +37,7 @@ def get_place_info(lat: float, lon: float) -> Dict[str, Optional[str]]:
             "full_address": str
         }
     """
-    print('ВЫЗВАНА get_place_info')
+    logger.info("Вызвана get_place_info")
 
     params = {
         "lat": lat,

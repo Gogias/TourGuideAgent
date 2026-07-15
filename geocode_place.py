@@ -5,6 +5,8 @@ import time
 from dotenv import load_dotenv
 import os
 
+logger = logging.getLogger(__name__)
+
 load_dotenv()
 
 NOMINATIM_URL = "https://nominatim.openstreetmap.org/search"
@@ -36,7 +38,7 @@ def geocode_place(query: str) -> dict:
         }
         или {"error": str} если место не найдено
     """
-    print("ВЫЗВАНА geocode_place")
+    logger.info("Вызвана geocode_place")
 
     params = {
         "q": query,

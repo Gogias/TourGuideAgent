@@ -1,7 +1,7 @@
 import os
 from langchain_openai import ChatOpenAI
 from langchain.agents import create_agent
-from langgraph.checkpoint.memory import InMemorySaver
+from langgraph.checkpoint.sqlite import SqliteSaver
 
 # Тулзы
 from search_places import search_places
@@ -38,7 +38,9 @@ SYSTEM_PROMPT = """
 Отвечай ТОЛЬКО на русском языке.
 """
 
-checkpointer = InMemorySaver()
+# Храним ссылку на контекстный менеджер, чтобы БД не закрылась при GC
+_checkpointer_cm = SqliteSaver.from_conn_string("checkpoints.db")
+checkpointer = _checkpointer_cm.__enter__()
 
 agent = create_agent(
     model=llm,
