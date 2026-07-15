@@ -17,7 +17,7 @@ router = Router()
 
 MAX_MESSAGE_LENGTH = 4096
 
-ADMIN_IDS = os.getenv("ADMIN_IDS")
+ADMIN_IDS = {int(x) for x in os.getenv("ADMIN_IDS", "").split(",") if x}
 
 @router.message(Command("restart"))
 async def cmd_restart(message: Message):
@@ -63,27 +63,6 @@ async def send_converted(message: Message, raw_text: str):
             chunk_text,
             entities=to_aiogram_entities(chunk_entities),
         )
-
-
-# @router.message()
-# async def handle_message(message: Message):
-#     user_id = str(message.from_user.id)
-
-#     if message.location:
-#         lat = message.location.latitude
-#         lon = message.location.longitude
-#         user_text = f"Что интересного есть на координатах {lat}, {lon}?"
-#     else:
-#         user_text = message.text
-
-#     await message.bot.send_chat_action(message.chat.id, "typing")
-
-#     response = await asyncio.get_event_loop().run_in_executor(
-#         None, ask_agent, user_text, user_id
-#     )
-
-#     await send_converted(message, response)
-
 
 
 @router.message()
