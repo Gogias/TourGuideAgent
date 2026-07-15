@@ -1,4 +1,5 @@
 import asyncio
+import logging
 from aiogram import Router
 from aiogram.types import Message, MessageEntity
 from aiogram.filters import CommandStart, Command
@@ -31,6 +32,9 @@ async def cmd_restart(message: Message):
 
     # Даём aiogram время отправить сообщение перед завершением процесса
     await asyncio.sleep(1)
+
+    # Явно закрываем HTTP-сессию бота
+    await message.bot.session.close()
 
     # Полностью завершает процесс — bat-файл с циклом поднимет его заново
     raise SystemExit(1)
@@ -80,11 +84,15 @@ async def handle_message(message: Message):
         bot=message.bot,
         chat_id=message.chat.id,
     ):
-        response = await asyncio.get_event_loop().run_in_executor(
-            None,
-            ask_agent,
-            user_text,
-            user_id,
-        )
+        try:
+            response = await asyncio.get_running_loop().run_in_executor(
+                None, ask_agent, user_text, user_id
+            )
+        except Exception:
+            logging.exception("Ошибка при обращении к агенту")
+            await message.answer(
+                "😕 Не получилось обработать запрос — модель сейчас недоступна. Попробуй ещё раз через минуту."
+            )
+            return
 
     await send_converted(message, response)

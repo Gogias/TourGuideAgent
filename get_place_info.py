@@ -1,3 +1,4 @@
+import logging
 import requests
 from langchain.tools import tool
 from typing import Dict, Optional
@@ -11,6 +12,10 @@ NOMINATIM_URL = "https://nominatim.openstreetmap.org/reverse"
 
 load_dotenv()
 USER_AGENT = os.getenv("USER_AGENT")
+if not USER_AGENT:
+    logging.getLogger(__name__).warning(
+        "USER_AGENT не задан в .env — запросы к Nominatim могут быть заблокированы"
+    )
 
 @tool
 def get_place_info(lat: float, lon: float) -> Dict[str, Optional[str]]:

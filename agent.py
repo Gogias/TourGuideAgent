@@ -1,3 +1,4 @@
+import os
 from langchain_openai import ChatOpenAI
 from langchain.agents import create_agent
 from langgraph.checkpoint.memory import InMemorySaver
@@ -10,9 +11,9 @@ from route_link import get_route_link
 from wikipedia_lookup import wikipedia_lookup
 
 llm = ChatOpenAI(
-    base_url="http://localhost:5001/v1", #подключаемся локально через kobold.cpp
-    api_key="123", # Api KEY и model при локальном подключении роли не играют
-    model="qwen",
+    base_url=os.getenv("LLM_BASE_URL", "http://localhost:5001/v1"),
+    api_key=os.getenv("LLM_API_KEY", "123"),
+    model=os.getenv("LLM_MODEL", "qwen"),
     temperature=0,
     extra_body={"chat_template_kwargs": {"enable_thinking": True}},
 )

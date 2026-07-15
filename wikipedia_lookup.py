@@ -1,3 +1,4 @@
+import logging
 import requests
 from langchain.tools import tool
 from dotenv import load_dotenv
@@ -8,6 +9,10 @@ load_dotenv()
 
 WIKI_API_URL = "https://ru.wikipedia.org/w/api.php"
 USER_AGENT = os.getenv("USER_AGENT")
+if not USER_AGENT:
+    logging.getLogger(__name__).warning(
+        "USER_AGENT не задан в .env — запросы к Wikipedia API могут быть заблокированы"
+    )
 
 MAX_EXTRACT_CHARS = 4000  # ограничиваем объём текста, чтобы не перегружать контекст LLM
 

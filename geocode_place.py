@@ -1,3 +1,4 @@
+import logging
 import requests
 from langchain.tools import tool
 import time
@@ -8,6 +9,10 @@ load_dotenv()
 
 NOMINATIM_URL = "https://nominatim.openstreetmap.org/search"
 USER_AGENT = os.getenv("USER_AGENT")
+if not USER_AGENT:
+    logging.getLogger(__name__).warning(
+        "USER_AGENT не задан в .env — запросы к Nominatim могут быть заблокированы"
+    )
 
 
 @tool

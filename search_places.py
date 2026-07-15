@@ -2,6 +2,7 @@
 Модуль поиска достопримечательностей рядом с заданными координатами.
 """
 
+import logging
 import requests
 import math
 import time
@@ -22,6 +23,10 @@ OVERPASS_SERVERS = [
 WIKI_API_URL = "https://ru.wikipedia.org/w/api.php"
 load_dotenv()
 USER_AGENT = os.getenv("USER_AGENT")
+if not USER_AGENT:
+    logging.getLogger(__name__).warning(
+        "USER_AGENT не задан в .env — запросы к Overpass/Wikipedia API могут быть заблокированы"
+    )
 SHORT_EXTRACT_CHARS = 200
 MAX_BATCH_TITLES = 20
 DEDUP_DISTANCE_KM = 0.03
