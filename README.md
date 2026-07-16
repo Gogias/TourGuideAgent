@@ -130,7 +130,7 @@ TourGuideAgent/
 
 ```bash
 # Клонируйте репозиторий
-git clone https://github.com/yourusername/TourGuideAgent.git
+git clone https://github.com/Gogias/TourGuideAgent.git
 cd TourGuideAgent
 
 # Создайте и активируйте виртуальное окружение
@@ -145,7 +145,7 @@ pip install -r requirements.txt
 #### Вариант 2: Conda
 
 ```bash
-git clone https://github.com/yourusername/TourGuideAgent.git
+git clone https://github.com/Gogias/TourGuideAgent.git
 cd TourGuideAgent
 conda env create -f environment.yml
 conda activate my_project
